@@ -4,6 +4,8 @@ import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/registerUser.schema';
 import { InjectModel } from '@nestjs/mongoose';
 
+import * as bcrypt from 'bcrypt';
+
 @Injectable()
 export class RegisterService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
@@ -15,9 +17,7 @@ export class RegisterService {
       });
 
       if (existingUsername) {
-        return res
-          .status(409)
-          .json({ message: 'Username already exists.' });
+        return res.status(409).json({ message: 'Username already exists.' });
       }
 
       const existingEmail = await this.userModel.findOne({
@@ -25,21 +25,24 @@ export class RegisterService {
       });
 
       if (existingEmail) {
-        return res
-          .status(409)
-          .json({ message: 'Email already exists.' });
+        return res.status(409).json({ message: 'Email already exists.' });
       }
 
-      // Създаване на нов потребител
+      const salt = await bcrypt.genSalt(+process.env.SALT_ROUNDS);
+
+      const hashedPass = await bcrypt.hash(userData.passwords.password, salt);
+
       const newUser = new this.userModel({
         username: userData.username,
         name: userData.name,
         birthday: userData.birthday,
         email: userData.email,
-        password: userData.passwords.password, // Увери се, че преди това си хеширал паролата
+        password: hashedPass,
+        salt: salt,
       });
 
       await newUser.save();
+
       return res.status(201).json({
         message: `User ${userData.username} registered successfully!`,
       });
