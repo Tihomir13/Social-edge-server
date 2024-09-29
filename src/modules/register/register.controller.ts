@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import { Controller, Post, Body, Res, Query } from '@nestjs/common';
 import { Response } from 'express';
 import { RegisterService } from './register.service';
 
