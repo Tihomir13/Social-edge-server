@@ -1,11 +1,17 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
-
 import { RegisterModule } from './modules/register/register.module';
+import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { UtilityModule } from './shared/modules/utility/utility.module';
+import { JwtMiddleware } from './middlewares/jwt/jwt.middleware';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -14,10 +20,20 @@ import { UtilityModule } from './shared/modules/utility/utility.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.MONGO_URI),
+    JwtModule.register({
+      secret: 'yourSecretKey',
+      signOptions: { expiresIn: '1h' },
+    }),
     RegisterModule,
     UtilityModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(JwtMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}
