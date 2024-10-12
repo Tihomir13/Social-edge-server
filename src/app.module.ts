@@ -12,6 +12,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UtilityModule } from './shared/modules/utility/utility.module';
 import { JwtMiddleware } from './middlewares/jwt/jwt.middleware';
 import { JwtModule } from '@nestjs/jwt';
+import { HomeModule } from './modules/home/home.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
     RegisterModule,
     UtilityModule,
+    HomeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
