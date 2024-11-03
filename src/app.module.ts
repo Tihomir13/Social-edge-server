@@ -21,10 +21,7 @@ import { HomeModule } from './modules/home/home.module';
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.MONGO_URI),
-    JwtModule.register({
-      secret: 'yourSecretKey',
-      signOptions: { expiresIn: '1h' },
-    }),
+    JwtModule,
     AuthenticationModule,
     UtilityModule,
     HomeModule,

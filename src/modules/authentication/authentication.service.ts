@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { JwtService } from '@nestjs/jwt';
+
 import { Response } from 'express';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/registerUser.schema';
-import { InjectModel } from '@nestjs/mongoose';
-
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthenticationService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private jwtService: JwtService,
+  ) {}
 
-  async register(userData: any, res: Response) {
+  async register(userData: any, res: Response): Promise<any> {
     try {
       const existingUsername = await this.userModel.findOne({
         username: userData.username,
@@ -54,13 +58,51 @@ export class AuthenticationService {
     }
   }
 
-  async login(userData: any, res: Response) {
-    console.log(userData);
+  async login(userData: any, res: Response): Promise<any> {
+    try {
+      let user = await this.userModel.findOne({
+        username: userData.loginIdentifier,
+      });
 
-    // try {
-    //   const existingUsername = await this.userModel.findOne({
-    //     username: userData.username,
-    //   });
-    // } catch (error) {}
+      if (!user) {
+        user = await this.userModel.findOne({
+          email: userData.loginIdentifier,
+        });
+      }
+
+      if (!user) {
+        return res.status(401).json({
+          message: 'Invalid username/email or password. Please try again.',
+        });
+      }
+
+      const isPasswordValid = await bcrypt.compare(
+        userData.password,
+        user.password,
+      );
+
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          message: 'Invalid username/email or password. Please try again.',
+        });
+      }
+
+      const payload = {
+        id: user._id.toString(),
+        username: user.username,
+      };
+
+      const token = this.jwtService.sign(payload);
+
+      return res.status(201).json({
+        message: `User ${userData.loginIdentifier} login successfully!`,
+        token,
+      });
+    } catch (error) {
+      console.error('Login error:', error);
+      return res
+        .status(400)
+        .json({ message: 'Failed to login user. Please try again later.' });
+    }
   }
 }
