@@ -4,15 +4,16 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-import { UtilityModule } from './shared/modules/utility/utility.module';
-import { JwtMiddleware } from './middlewares/jwt/jwt.middleware';
 import { JwtModule } from '@nestjs/jwt';
+
+import { AppService } from './app.service';
+import { AuthenticationModule } from './modules/authentication/authentication.module';
+import { JwtMiddleware } from './middlewares/jwt/jwt.middleware';
+import { UtilityModule } from './shared/modules/utility/utility.module';
 import { HomeModule } from './modules/home/home.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [

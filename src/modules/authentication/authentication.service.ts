@@ -11,7 +11,7 @@ import * as bcrypt from 'bcrypt';
 export class AuthenticationService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async register(userData: any, res: Response): Promise<any> {
@@ -92,11 +92,19 @@ export class AuthenticationService {
         username: user.username,
       };
 
+      const userInfo = {
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        birthday: user.birthday,
+      };
+
       const token = this.jwtService.sign(payload);
 
       return res.status(201).json({
         message: `User ${userData.loginIdentifier} login successfully!`,
         token,
+        userInfo,
       });
     } catch (error) {
       console.error('Login error:', error);
@@ -104,5 +112,9 @@ export class AuthenticationService {
         .status(400)
         .json({ message: 'Failed to login user. Please try again later.' });
     }
+  }
+
+  async verifyToken(token: any, res: Response) {
+
   }
 }
