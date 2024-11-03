@@ -7,7 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class RegisterService {
+export class AuthenticationService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async register(userData: any, res: Response) {
@@ -52,5 +52,15 @@ export class RegisterService {
         .status(400)
         .json({ message: 'Failed to register user. Please try again later.' });
     }
+  }
+
+  async login(userData: any, res: Response) {
+    console.log(userData);
+
+    // try {
+    //   const existingUsername = await this.userModel.findOne({
+    //     username: userData.username,
+    //   });
+    // } catch (error) {}
   }
 }

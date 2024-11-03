@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { RegisterModule } from './modules/register/register.module';
+import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { UtilityModule } from './shared/modules/utility/utility.module';
@@ -25,7 +25,7 @@ import { HomeModule } from './modules/home/home.module';
       secret: 'yourSecretKey',
       signOptions: { expiresIn: '1h' },
     }),
-    RegisterModule,
+    AuthenticationModule,
     UtilityModule,
     HomeModule,
   ],
@@ -36,6 +36,10 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(JwtMiddleware)
+      .exclude(
+        { path: 'register', method: RequestMethod.ALL },
+        { path: 'login', method: RequestMethod.ALL },
+      )
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
