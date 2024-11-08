@@ -5,6 +5,7 @@ import {
   Res,
   UploadedFiles,
   UseInterceptors,
+  Req,
 } from '@nestjs/common';
 
 import { PostsService } from '../posts.service';
@@ -15,19 +16,17 @@ export class NewPostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'images', maxCount: 10 }, // Може да настроите броя на файловете тук
-    ]),
-  )
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 10 }]))
   async create(
-    @Body() newPost: any,
+    @Body() userData: any,
     @UploadedFiles() files: { images?: Express.Multer.File[] },
     @Res() res: Response,
+    @Req() req: any,
   ) {
-    // Проверка дали има файлове в images и ги добавяме към новия пост
-    newPost.images = files.images || [];
+    userData.images = files.images || [];
 
-    return this.postsService.createNewPost(newPost, res);
+    userData.userId = req.user?.id;
+
+    return this.postsService.createNewPost(userData, res);
   }
 }

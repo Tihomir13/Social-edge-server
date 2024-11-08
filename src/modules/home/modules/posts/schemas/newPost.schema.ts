@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
-export type UserDocument = Post & Document;
+export type PostDocument = Post & Document;
 
 @Schema({ timestamps: true })
 export class Reply {
@@ -11,10 +11,10 @@ export class Reply {
   @Prop({ required: true })
   text: string;
 
-  @Prop({ required: true })
-  likes: string;
+  @Prop({ default: 0 })
+  likes: number;
 
-  @Prop({ required: true })
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Reply' }] })
   replies: Reply[];
 }
 
@@ -26,44 +26,32 @@ export class Comment {
   @Prop({ required: true })
   text: string;
 
-  @Prop({ required: true })
-  likes: string;
+  @Prop({ default: 0 })
+  likes: number;
 
-  @Prop({ required: true })
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Reply' }] })
   replies: Reply[];
 }
 
 @Schema({ timestamps: true })
 export class Post {
   @Prop({ required: true })
+  author: string;
+
+  @Prop({ required: true })
   title: string;
 
   @Prop({ required: true })
   text: string;
 
-  @Prop({ required: true })
-  images: Buffer[];
+  @Prop({ type: [String], required: true }) // Съхранява изображения като URL-и (string)
+  images: string[];
 
-  @Prop({ required: true })
+  @Prop({ default: 0 })
   likes: number;
 
-  @Prop({ required: true })
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Comment' }] }) // Отнася се към колекцията за коментари
   comments: Comment[];
-
-  //   @Prop({ type: Name, required: true })
-  //   name: Name;
-
-  //   @Prop({ required: true, unique: true })
-  //   email: string;
-
-  //   @Prop({ type: Birthday, required: true })
-  //   birthday: Birthday;
-
-  //   @Prop({ required: true })
-  //   password: string;
-
-  //   @Prop({ required: true })
-  //   salt: string;
 }
 
-export const UserSchema = SchemaFactory.createForClass(Post);
+export const PostSchema = SchemaFactory.createForClass(Post);

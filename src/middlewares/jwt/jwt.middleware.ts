@@ -4,13 +4,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService) {}
 
-  use(req: Request, res: Response, next: NextFunction) {
+  use(req: any, res: Response, next: NextFunction) {
     const token = req.headers['authorization']; // Извлича токена от заглавието
 
     if (!token) {
@@ -20,8 +20,9 @@ export class JwtMiddleware implements NestMiddleware {
     try {
       const decoded = this.jwtService.verify(token, {
         secret: process.env.JWT_SECRET,
-      }); // Проверява валидността на токена
-      req.user = decoded; // Запазва информацията за потребителя в заявката
+      });
+
+      req.user = { id: decoded.id };
       next();
     } catch (error) {
       throw new UnauthorizedException('Invalid token');

@@ -3,15 +3,20 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { NewPostsController } from './controllers/new-posts.controller';
 import { PostsService } from './posts.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Post, PostSchema } from './schemas/newPost.schema';
 
 @Module({
   imports: [
     ConfigModule,
+    MongooseModule.forFeature([
+      { name: Post.name, schema: PostSchema, collection: 'posts' },
+    ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: process.env.JWT_SECRET,
+        secret: configService.get<string>('JWT_SECRET'),
         signOptions: { expiresIn: '1h' },
       }),
     }),
