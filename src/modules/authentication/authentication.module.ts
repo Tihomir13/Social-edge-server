@@ -23,7 +23,7 @@ import { User, UserSchema } from './schemas/registerUser.schema';
       }),
     }),
   ],
-  controllers: [RegisterController, LoginController],
   providers: [AuthenticationService],
+  controllers: [RegisterController, LoginController],
 })
 export class AuthenticationModule {}

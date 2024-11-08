@@ -1,16 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-
-import { HomeController } from './controllers/home.controller';
-
-import { HomeService } from './home.service';
-import { PostsModule } from './modules/posts/posts.module';
-
+import { NewPostsController } from './controllers/new-posts.controller';
+import { PostsService } from './posts.service';
 
 @Module({
   imports: [
-    PostsModule,
     ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -21,7 +16,8 @@ import { PostsModule } from './modules/posts/posts.module';
       }),
     }),
   ],
-  providers: [HomeService],
-  controllers: [HomeController],
+  controllers: [NewPostsController],
+  providers: [PostsService],
+  exports: [],
 })
-export class HomeModule {}
+export class PostsModule {}

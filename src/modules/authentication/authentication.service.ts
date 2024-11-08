@@ -113,8 +113,4 @@ export class AuthenticationService {
         .json({ message: 'Failed to login user. Please try again later.' });
     }
   }
-
-  async verifyToken(token: any, res: Response) {
-
-  }
 }
