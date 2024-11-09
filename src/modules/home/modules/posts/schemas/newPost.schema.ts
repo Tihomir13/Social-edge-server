@@ -3,10 +3,19 @@ import { Document, Types } from 'mongoose';
 
 export type PostDocument = Post & Document;
 
+@Schema()
+export class Author {
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  id: Types.ObjectId;
+
+  @Prop({ required: true })
+  username: string;
+}
+
 @Schema({ timestamps: true })
 export class Reply {
   @Prop({ required: true })
-  author: string;
+  author: Author;
 
   @Prop({ required: true })
   text: string;
@@ -21,7 +30,7 @@ export class Reply {
 @Schema({ timestamps: true })
 export class Comment {
   @Prop({ required: true })
-  author: string;
+  author: Author;
 
   @Prop({ required: true })
   text: string;
@@ -33,10 +42,19 @@ export class Comment {
   replies: Reply[];
 }
 
+@Schema()
+export class Image {
+  @Prop({ required: true })
+  data: string;
+
+  @Prop({ required: true })
+  contentType: string;
+}
+
 @Schema({ timestamps: true })
 export class Post {
   @Prop({ required: true })
-  author: string;
+  author: Author;
 
   @Prop({ required: true })
   title: string;
@@ -44,13 +62,16 @@ export class Post {
   @Prop({ required: true })
   text: string;
 
-  @Prop({ type: [String], required: true }) // Съхранява изображения като URL-и (string)
-  images: string[];
+  @Prop({ required: true })
+  tags: string[];
+
+  @Prop({ type: [Image], required: true })
+  images: Image[];
 
   @Prop({ default: 0 })
   likes: number;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Comment' }] }) // Отнася се към колекцията за коментари
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Comment' }] })
   comments: Comment[];
 }
 

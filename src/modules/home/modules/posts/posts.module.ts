@@ -5,6 +5,7 @@ import { NewPostsController } from './controllers/new-posts.controller';
 import { PostsService } from './posts.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Post, PostSchema } from './schemas/newPost.schema';
+import { GetPostsController } from './controllers/get-posts.controller';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { Post, PostSchema } from './schemas/newPost.schema';
       }),
     }),
   ],
-  controllers: [NewPostsController],
+  controllers: [NewPostsController, GetPostsController],
   providers: [PostsService],
   exports: [],
 })

@@ -22,7 +22,7 @@ export class JwtMiddleware implements NestMiddleware {
         secret: process.env.JWT_SECRET,
       });
 
-      req.user = { id: decoded.id };
+      req.user = { id: decoded.id, username: decoded.username };
       next();
     } catch (error) {
       throw new UnauthorizedException('Invalid token');

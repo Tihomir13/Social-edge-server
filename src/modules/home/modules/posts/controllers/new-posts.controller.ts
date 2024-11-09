@@ -26,6 +26,7 @@ export class NewPostsController {
     userData.images = files.images || [];
 
     userData.userId = req.user?.id;
+    userData.username = req.user?.username;
 
     return this.postsService.createNewPost(userData, res);
   }
