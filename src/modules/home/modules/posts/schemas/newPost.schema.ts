@@ -56,10 +56,10 @@ export class Post {
   @Prop({ required: true })
   author: Author;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   title: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   text: string;
 
   @Prop({ required: true })
