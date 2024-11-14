@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 import { Post, PostDocument } from './schemas/newPost.schema';
 
@@ -24,7 +24,7 @@ export class PostsService {
         text: userData.text,
         tags: userData.tags,
         images,
-        likes: 0,
+        likes: [],
         comments: [],
       });
 
@@ -86,6 +86,49 @@ export class PostsService {
     } catch (error) {
       console.error('Error fetching posts:', error);
       return res.status(400).json({ message: 'Failed to fetch posts' });
+    }
+  }
+
+  async likePost(
+    req: any,
+    res: any,
+    userData: any,
+    postId: string,
+  ): Promise<any> {
+    try {
+      // Намираме поста по ID
+      const post = await this.postModel.findOne({
+        _id: new Types.ObjectId(postId),
+      });
+
+      if (!post) {
+        return res.status(404).json({
+          message: 'Post not found',
+        });
+      }
+
+      let likes = [...post.likes];
+
+      if (likes.includes(userData.id)) {
+        const index = likes.indexOf(userData.id);
+        likes.splice(index, 1);
+      } else {
+        likes.push(userData.id);
+      }
+
+      await this.postModel.updateOne(
+        { _id: new Types.ObjectId(postId) },
+        { $set: { likes: likes } },
+      );
+
+      return res.status(200).json({
+        likes,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(400).json({
+        message: 'Post like failed',
+      });
     }
   }
 }

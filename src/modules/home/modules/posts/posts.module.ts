@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { MongooseModule } from '@nestjs/mongoose';
+
 import { NewPostsController } from './controllers/new-posts.controller';
 import { PostsService } from './posts.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { Post, PostSchema } from './schemas/newPost.schema';
-import { GetPostsController } from './controllers/get-posts.controller';
+import { GetPostsController } from './controllers/posts.controller';
 
 @Module({
   imports: [

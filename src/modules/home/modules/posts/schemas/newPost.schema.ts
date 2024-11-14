@@ -20,8 +20,8 @@ export class Reply {
   @Prop({ required: true })
   text: string;
 
-  @Prop({ default: 0 })
-  likes: number;
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
+  likes: Types.ObjectId[];
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Reply' }] })
   replies: Reply[];
@@ -35,8 +35,8 @@ export class Comment {
   @Prop({ required: true })
   text: string;
 
-  @Prop({ default: 0 })
-  likes: number;
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
+  likes: Types.ObjectId[];
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Reply' }] })
   replies: Reply[];
@@ -68,8 +68,8 @@ export class Post {
   @Prop({ type: [Image], required: true })
   images: Image[];
 
-  @Prop({ default: 0 })
-  likes: number;
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
+  likes: Types.ObjectId[];
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Comment' }] })
   comments: Comment[];
