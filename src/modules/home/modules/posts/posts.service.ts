@@ -109,11 +109,11 @@ export class PostsService {
 
       let likes = [...post.likes];
 
-      if (likes.includes(userData.id)) {
-        const index = likes.indexOf(userData.id);
+      if (likes.includes(userData.username)) {
+        const index = likes.indexOf(userData.username);
         likes.splice(index, 1);
       } else {
-        likes.push(userData.id);
+        likes.push(userData.username);
       }
 
       await this.postModel.updateOne(
