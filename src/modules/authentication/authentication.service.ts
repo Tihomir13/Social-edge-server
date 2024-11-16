@@ -6,16 +6,20 @@ import { Response } from 'express';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/registerUser.schema';
 import * as bcrypt from 'bcrypt';
+import { AgeService } from './helpers/age.service';
 
 @Injectable()
 export class AuthenticationService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private readonly jwtService: JwtService,
+    private ageService: AgeService,
   ) {}
 
   async register(userData: any, res: Response): Promise<any> {
     try {
+      console.log(userData);
+
       const existingUsername = await this.userModel.findOne({
         username: userData.username,
       });
@@ -30,6 +34,12 @@ export class AuthenticationService {
 
       if (existingEmail) {
         return res.status(409).json({ message: 'Email already exists.' });
+      }
+
+      const isUnder16 = this.ageService.isUnder16(userData.birthday);
+      
+      if(isUnder16) {
+        return res.status(422).json({ message: 'The user is under 16' });
       }
 
       const salt = await bcrypt.genSalt(+process.env.SALT_ROUNDS);
