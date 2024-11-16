@@ -7,6 +7,7 @@ import { RegisterController } from './controllers/register.controller';
 import { LoginController } from './controllers/login.controller';
 import { AuthenticationService } from './authentication.service';
 import { User, UserSchema } from './schemas/registerUser.schema';
+import { AgeService } from './helpers/age.service';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { User, UserSchema } from './schemas/registerUser.schema';
       }),
     }),
   ],
-  providers: [AuthenticationService],
+  providers: [AuthenticationService, AgeService],
   controllers: [RegisterController, LoginController],
 })
 export class AuthenticationModule {}
