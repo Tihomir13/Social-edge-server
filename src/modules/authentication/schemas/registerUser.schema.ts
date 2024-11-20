@@ -48,6 +48,9 @@ export class User {
 
   @Prop({ required: true })
   salt: string;
+
+  @Prop({ required: true })
+  status: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
