@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res } from '@nestjs/common';
+
 import { AuthenticationService } from '../authentication.service';
 
 @Controller('verify-token')
