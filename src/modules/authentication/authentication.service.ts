@@ -8,12 +8,24 @@ import { User, UserDocument } from './schemas/registerUser.schema';
 import * as bcrypt from 'bcrypt';
 import { AgeService } from './helpers/age.service';
 
+import { VerifyUser, VerifyUserDocument } from './schemas/verifyUser.schema';
+import { MailService } from '../../shared/mail/services/mail.service';
+
+// User Statuses
+
+// 0 - email not verified
+// 1 - account is active
+// 2 - account is banned
+
 @Injectable()
 export class AuthenticationService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(VerifyUser.name)
+    private verifyUserModel: Model<VerifyUserDocument>,
     private readonly jwtService: JwtService,
-    private ageService: AgeService,
+    private readonly ageService: AgeService,
+    private mailService: MailService,
   ) {}
 
   async register(userData: any, res: Response): Promise<any> {
@@ -37,8 +49,8 @@ export class AuthenticationService {
       }
 
       const isUnder16 = this.ageService.isUnder16(userData.birthday);
-      
-      if(isUnder16) {
+
+      if (isUnder16) {
         return res.status(422).json({ message: 'The user is under 16' });
       }
 
@@ -53,9 +65,31 @@ export class AuthenticationService {
         email: userData.email,
         password: hashedPass,
         salt: salt,
+        status: 0,
       });
 
       await newUser.save();
+
+      const user = await this.userModel.findOne({ email: userData.email });
+
+      const userToken = this.mailService.generateEmailToken();
+
+      const verifyUser = new this.verifyUserModel({
+        userId: user._id,
+        token: userToken,
+      });
+
+      await verifyUser.save();
+
+      const userVerifyData = {
+        email: userData.email,
+        name: userData.name,
+        token: userToken,
+      };
+
+      const subject = 'Verify Email';
+
+      this.mailService.sendEmailVerification(userVerifyData, subject);
 
       return res.status(201).json({
         message: `User ${userData.username} registered successfully!`,
@@ -97,6 +131,14 @@ export class AuthenticationService {
         });
       }
 
+      console.log(user.status);
+
+      if (user.status === 0) {
+        return res.status(403).json({
+          message: 'Please verify your email to continue!',
+        });
+      }
+
       const payload = {
         id: user._id.toString(),
         username: user.username,
@@ -122,5 +164,26 @@ export class AuthenticationService {
         .status(400)
         .json({ message: 'Failed to login user. Please try again later.' });
     }
+  }
+
+  async verifyEmail(token, res) {
+    console.log(token);
+
+    try {
+      const foundedToken = await this.verifyUserModel.findOne({ token: token });
+
+      if (!foundedToken) {
+        return;
+      }
+
+      await this.userModel.updateOne(
+        { _id: foundedToken.userId },
+        { $set: { status: 1 } },
+      );
+
+      await this.verifyUserModel.deleteOne({ token: token });
+
+      res.redirect('http://localhost:4200')
+    } catch (error) {}
   }
 }
