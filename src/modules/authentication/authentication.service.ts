@@ -11,6 +11,12 @@ import { AgeService } from './helpers/age.service';
 import { VerifyUser, VerifyUserDocument } from './schemas/verifyUser.schema';
 import { MailService } from '../../shared/mail/services/mail.service';
 
+// User Statuses
+
+// 0 - email not verified
+// 1 - account is active
+// 2 - account is banned
+
 @Injectable()
 export class AuthenticationService {
   constructor(
@@ -59,7 +65,7 @@ export class AuthenticationService {
         email: userData.email,
         password: hashedPass,
         salt: salt,
-        status: 'notVerified',
+        status: 0,
       });
 
       await newUser.save();
@@ -69,7 +75,7 @@ export class AuthenticationService {
       const userToken = this.mailService.generateEmailToken();
 
       const verifyUser = new this.verifyUserModel({
-        userId: user._id.toString(),
+        userId: user._id,
         token: userToken,
       });
 
@@ -127,7 +133,7 @@ export class AuthenticationService {
 
       console.log(user.status);
 
-      if (user.status === 'notVerified') {
+      if (user.status === 0) {
         return res.status(403).json({
           message: 'Please verify your email to continue!',
         });
@@ -158,5 +164,26 @@ export class AuthenticationService {
         .status(400)
         .json({ message: 'Failed to login user. Please try again later.' });
     }
+  }
+
+  async verifyEmail(token, res) {
+    console.log(token);
+
+    try {
+      const foundedToken = await this.verifyUserModel.findOne({ token: token });
+
+      if (!foundedToken) {
+        return;
+      }
+
+      await this.userModel.updateOne(
+        { _id: foundedToken.userId },
+        { $set: { status: 1 } },
+      );
+
+      await this.verifyUserModel.deleteOne({ token: token });
+
+      res.redirect('http://localhost:4200')
+    } catch (error) {}
   }
 }

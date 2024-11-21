@@ -2,7 +2,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 
 import { randomBytes } from 'crypto';
-import { api } from '../../constants/api';
+import { api, apiServer } from '../../constants/api';
 
 @Injectable()
 export class MailService {
@@ -15,19 +15,21 @@ export class MailService {
   async sendEmailVerification(
     user: {
       email: string;
-      name: string;
+      name: { firstName: string; lastName: string };
       token: string;
     },
     subject: string,
   ) {
-    const url = `${api}/auth/verify?token=${user.token}`;
+    console.log(user);
+
+    const url = `${apiServer}/verify-token?token=${user.token}`;
 
     await this.mailerService.sendMail({
       to: user.email,
       subject: subject,
       template: 'email-verification.hbs',
       context: {
-        name: user.name,
+        name: `${user.name.firstName} ${user.name.lastName}`,
         url,
       },
     });

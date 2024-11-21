@@ -44,6 +44,7 @@ export class AppModule implements NestModule {
       .exclude(
         { path: 'register', method: RequestMethod.ALL },
         { path: 'login', method: RequestMethod.ALL },
+        { path: 'verify-token', method: RequestMethod.ALL },
       )
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }

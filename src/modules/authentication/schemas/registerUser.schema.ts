@@ -50,7 +50,7 @@ export class User {
   salt: string;
 
   @Prop({ required: true })
-  status: string;
+  status: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
