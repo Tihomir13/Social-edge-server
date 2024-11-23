@@ -3,8 +3,6 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class AgeService {
   isUnder16(birthday: { day: number; month: number; year: number }): boolean {
-    console.log(birthday);
-
     const today = new Date();
     const birthDate = new Date(birthday.year, birthday.month - 1, birthday.day);
 

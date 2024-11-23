@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 
 export type PostDocument = Post & Document;
 
-@Schema()
+@Schema({ _id: false })
 export class Author {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   id: Types.ObjectId;
@@ -27,7 +27,7 @@ export class Reply {
   replies: Reply[];
 }
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, _id: false })
 export class Comment {
   @Prop({ required: true })
   author: Author;

@@ -24,6 +24,15 @@ export class Birthday {
   year: number;
 }
 
+@Schema()
+export class Image {
+  @Prop({ required: true })
+  data: string;
+
+  @Prop({ required: true })
+  contentType: string;
+}
+
 @Schema({
   timestamps: true,
 })
@@ -43,11 +52,17 @@ export class User {
   @Prop({ required: true })
   friendsIds: string[];
 
+  @Prop({ type: Image, required: true })
+  profileImage: Image;
+
   @Prop({ required: true })
   password: string;
 
   @Prop({ required: true })
   salt: string;
+
+  @Prop({ required: true })
+  status: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

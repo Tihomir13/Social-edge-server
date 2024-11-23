@@ -2,26 +2,18 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 
-import { HomeController } from './controllers/home.controller';
 
-import { HomeService } from './home.service';
+import { ProfileModule } from './modules/profile/profile.module';
 import { PostsModule } from './modules/posts/posts.module';
-
 
 @Module({
   imports: [
-    PostsModule,
     ConfigModule,
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        secret: process.env.JWT_SECRET,
-        signOptions: { expiresIn: '1h' },
-      }),
-    }),
+    PostsModule,
+    ProfileModule,
   ],
-  providers: [HomeService],
-  controllers: [HomeController],
+  providers: [],
+  controllers: [],
+  exports: []
 })
 export class HomeModule {}
