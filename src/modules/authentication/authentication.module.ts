@@ -51,7 +51,7 @@ import { VerifyEmailController } from './controllers/verify-email.controller';
           },
         },
         defaults: {
-          from: '"No Reply" social.edge2025@gmail.com',
+          from: '"Social Edge" social.edge2025@gmail.com',
         },
         template: {
           dir: join(__dirname, '../../shared/mail/templates'),

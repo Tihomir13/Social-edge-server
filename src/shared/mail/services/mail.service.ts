@@ -9,7 +9,7 @@ export class MailService {
   constructor(private mailerService: MailerService) {}
 
   generateEmailToken(): string {
-    return randomBytes(32).toString('hex');
+    return randomBytes(111).toString('hex');
   }
 
   async sendEmailVerification(
@@ -20,8 +20,6 @@ export class MailService {
     },
     subject: string,
   ) {
-    console.log(user);
-
     const url = `${apiServer}/verify-token?token=${user.token}`;
 
     await this.mailerService.sendMail({
