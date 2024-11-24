@@ -196,6 +196,40 @@ export class AuthenticationService {
       await this.verifyUserModel.deleteOne({ token: token });
 
       res.redirect('http://localhost:4200');
+    } catch (error) {
+      console.error('Login error:', error);
+      return res
+        .status(400)
+        .json({ message: 'Failed to verify user. Please try again later.' });
+    }
+  }
+
+  async sendJwt(userData, res) {
+    try {
+      let user = await this.userModel.findOne({
+        username: userData.username,
+      });
+
+      if (!user) {
+        return res.status(401).json({
+          message: 'Invalid username/email or password. Please try again.',
+        });
+      }
+
+      const payload = {
+        id: user._id.toString(),
+        username: user.username,
+      };
+
+      const token = this.jwtService.sign(payload);
+
+      console.log(token);
+      
+
+      return res.status(201).json({
+        message: `User ${userData.loginIdentifier} login successfully!`,
+        token,
+      });
     } catch (error) {}
   }
 }
