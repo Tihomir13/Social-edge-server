@@ -14,6 +14,7 @@ import { AgeService } from './helpers/age.service';
 import { join } from 'path';
 import { MailService } from '../../shared/mail/services/mail.service';
 import { VerifyEmailController } from './controllers/verify-email.controller';
+import { JwtSendController } from './controllers/jwt-send.controller';
 
 @Module({
   imports: [
@@ -64,7 +65,7 @@ import { VerifyEmailController } from './controllers/verify-email.controller';
     }),
   ],
   providers: [AuthenticationService, AgeService, MailService],
-  controllers: [RegisterController, LoginController, VerifyEmailController],
+  controllers: [RegisterController, LoginController, VerifyEmailController, JwtSendController],
 })
 export class AuthenticationModule {
   constructor() {}
