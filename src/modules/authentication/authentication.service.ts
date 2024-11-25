@@ -11,6 +11,9 @@ import { AgeService } from './helpers/age.service';
 import { VerifyUser, VerifyUserDocument } from './schemas/verifyUser.schema';
 import { MailService } from '../../shared/mail/services/mail.service';
 
+import * as fs from 'fs';
+import * as path from 'path';
+
 // User Statuses
 
 // 0 - email not verified
@@ -30,8 +33,6 @@ export class AuthenticationService {
 
   async register(userData: any, res: Response): Promise<any> {
     try {
-      console.log(userData);
-
       const existingUsername = await this.userModel.findOne({
         username: userData.username,
       });
@@ -58,12 +59,26 @@ export class AuthenticationService {
 
       const hashedPass = await bcrypt.hash(userData.passwords.password, salt);
 
+      // const imagePath = path.join(
+      //   __dirname,
+      //   '../../assets/images/default-profile-image.png',
+      // );
+      // const defaultImageBuffer = fs.readFileSync(imagePath);
+      // const defaultImageBase64 = defaultImageBuffer.toString('base64');
+
+      const defaultImage = {
+        data: Buffer.from('').toString('base64'),
+        contentType: '',
+      };
+
       const newUser = new this.userModel({
         username: userData.username,
         name: userData.name,
         birthday: userData.birthday,
         email: userData.email,
         password: hashedPass,
+        profileImage: defaultImage,
+        bannerImage: defaultImage,
         salt: salt,
         status: 0,
       });
@@ -167,8 +182,6 @@ export class AuthenticationService {
   }
 
   async verifyEmail(token, res) {
-    console.log(token);
-
     try {
       const foundedToken = await this.verifyUserModel.findOne({ token: token });
 
@@ -183,7 +196,41 @@ export class AuthenticationService {
 
       await this.verifyUserModel.deleteOne({ token: token });
 
-      res.redirect('http://localhost:4200')
+      res.redirect('http://localhost:4200');
+    } catch (error) {
+      console.error('Login error:', error);
+      return res
+        .status(400)
+        .json({ message: 'Failed to verify user. Please try again later.' });
+    }
+  }
+
+  async sendJwt(userData, res) {
+    try {
+      let user = await this.userModel.findOne({
+        username: userData.username,
+      });
+
+      if (!user) {
+        return res.status(401).json({
+          message: 'Invalid username/email or password. Please try again.',
+        });
+      }
+
+      const payload = {
+        id: user._id.toString(),
+        username: user.username,
+      };
+
+      const token = this.jwtService.sign(payload);
+
+      console.log(token);
+      
+
+      return res.status(201).json({
+        message: `User ${userData.loginIdentifier} login successfully!`,
+        token,
+      });
     } catch (error) {}
   }
 }
