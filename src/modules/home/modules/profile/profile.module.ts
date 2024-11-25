@@ -7,12 +7,14 @@ import { ProfileController } from './controllers/profile.controller';
 import { PostSchema } from '../posts/schemas/newPost.schema';
 import { ConfigModule } from '@nestjs/config';
 import { PostsModule } from '../posts/posts.module';
+import { User, UserSchema } from '../../../authentication/schemas/registerUser.schema';
 
 @Module({
   imports: [
     ConfigModule,
     MongooseModule.forFeature([
       { name: Post.name, schema: PostSchema, collection: 'posts' },
+      { name: User.name, schema: UserSchema, collection: 'users' },
     ]),
     PostsModule
   ],

@@ -77,8 +77,6 @@ export class PostsService {
         };
       });
 
-      console.log('Formatted posts:', formattedPosts);
-
       return res.status(200).json({
         message: 'Posts fetched successfully!',
         posts: formattedPosts,
@@ -122,8 +120,6 @@ export class PostsService {
             .filter((img) => img !== null),
         };
       });
-
-      console.log('Formatted posts:', formattedPosts);
 
       return res.status(200).json({
         message: 'Posts fetched successfully!',

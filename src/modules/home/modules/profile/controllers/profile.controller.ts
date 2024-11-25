@@ -20,12 +20,20 @@ export class ProfileController {
     private readonly postsService: PostsService,
     private readonly profileService: ProfileService,
   ) {}
-  @Get(':username')
+  @Get(':username/posts')
   async getUserPosts(
     @Param('username') username: string,
     @Res() res: Response,
   ) {
     return this.postsService.getPostsByUsername(username, res);
+  }
+
+  @Get(':username')
+  async getUserInitialData(
+    @Param('username') username: string,
+    @Res() res: Response,
+  ) {
+    return this.profileService.getInitialUserData(username, res);
   }
 
   @Post()

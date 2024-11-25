@@ -26,10 +26,10 @@ export class Birthday {
 
 @Schema()
 export class Image {
-  @Prop({ required: true })
+  @Prop({})
   data: string;
 
-  @Prop({ required: true })
+  @Prop({})
   contentType: string;
 }
 
@@ -54,6 +54,9 @@ export class User {
 
   @Prop({ type: Image, required: true })
   profileImage: Image;
+
+  @Prop({ type: Image, required: true })
+  bannerImage: Image;
 
   @Prop({ required: true })
   password: string;
