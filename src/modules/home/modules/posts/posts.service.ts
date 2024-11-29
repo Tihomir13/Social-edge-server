@@ -51,8 +51,6 @@ export class PostsService {
         })
         .sort({ createdAt: -1 });
 
-      console.log(posts);
-
       const formattedPosts = posts.map((post) => {
         const postObject = post.toObject();
 
@@ -94,8 +92,6 @@ export class PostsService {
           'author.username': username,
         })
         .sort({ createdAt: -1 });
-
-      console.log(posts);
 
       const formattedPosts = posts.map((post) => {
         const postObject = post.toObject();

@@ -1,11 +1,11 @@
 import { Module, Post } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
 
 import { ProfileService } from './profile.service';
 import { PostsService } from '../posts/posts.service';
 import { ProfileController } from './controllers/profile.controller';
 import { PostSchema } from '../posts/schemas/newPost.schema';
-import { ConfigModule } from '@nestjs/config';
 import { PostsModule } from '../posts/posts.module';
 import { User, UserSchema } from '../../../authentication/schemas/registerUser.schema';
 

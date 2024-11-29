@@ -15,6 +15,7 @@ import { join } from 'path';
 import { MailService } from '../../shared/mail/services/mail.service';
 import { VerifyEmailController } from './controllers/verify-email.controller';
 import { JwtSendController } from './controllers/jwt-send.controller';
+import { UserInfo, UserInfoSchema } from './schemas/userInfo.schema';
 
 @Module({
   imports: [
@@ -25,6 +26,11 @@ import { JwtSendController } from './controllers/jwt-send.controller';
         name: VerifyUser.name,
         schema: VerifyUserSchema,
         collection: 'userTokens',
+      },
+      {
+        name: UserInfo.name,
+        schema: UserInfoSchema,
+        collection: 'userInformation',
       },
     ]),
     JwtModule.registerAsync({

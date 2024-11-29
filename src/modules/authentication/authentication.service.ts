@@ -13,6 +13,7 @@ import { MailService } from '../../shared/mail/services/mail.service';
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { UserInfo, UserInfoDocument } from './schemas/userInfo.schema';
 
 // User Statuses
 
@@ -23,9 +24,12 @@ import * as path from 'path';
 @Injectable()
 export class AuthenticationService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(User.name) 
+    private userModel: Model<UserDocument>,
     @InjectModel(VerifyUser.name)
     private verifyUserModel: Model<VerifyUserDocument>,
+    @InjectModel(UserInfo.name)
+    private userInfoModel: Model<UserInfoDocument>,
     private readonly jwtService: JwtService,
     private readonly ageService: AgeService,
     private mailService: MailService,
@@ -74,7 +78,6 @@ export class AuthenticationService {
       const newUser = new this.userModel({
         username: userData.username,
         name: userData.name,
-        birthday: userData.birthday,
         email: userData.email,
         password: hashedPass,
         profileImage: defaultImage,
@@ -101,6 +104,17 @@ export class AuthenticationService {
         name: userData.name,
         token: userToken,
       };
+
+      const newUserInfo = new this.userInfoModel({
+        userId: user._id,
+        currLocation: '',
+        studied: [],
+        worksIn: [],
+        phoneNumber: '',
+        birthday: userData.birthday,
+      });
+
+      await newUserInfo.save();
 
       const subject = 'Verify Email';
 
@@ -163,7 +177,6 @@ export class AuthenticationService {
         name: user.name,
         username: user.username,
         email: user.email,
-        birthday: user.birthday,
       };
 
       const token = this.jwtService.sign(payload);
@@ -225,7 +238,6 @@ export class AuthenticationService {
       const token = this.jwtService.sign(payload);
 
       console.log(token);
-      
 
       return res.status(201).json({
         message: `User ${userData.loginIdentifier} login successfully!`,

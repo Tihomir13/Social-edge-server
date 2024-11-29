@@ -12,18 +12,6 @@ export class Name {
   lastName: string;
 }
 
-@Schema({})
-export class Birthday {
-  @Prop({ required: true })
-  day: number;
-
-  @Prop({ required: true })
-  month: number;
-
-  @Prop({ required: true })
-  year: number;
-}
-
 @Schema()
 export class Image {
   @Prop({})
@@ -45,9 +33,6 @@ export class User {
 
   @Prop({ required: true, unique: true })
   email: string;
-
-  @Prop({ type: Birthday, required: true })
-  birthday: Birthday;
 
   @Prop({ required: true })
   friendsIds: string[];

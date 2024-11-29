@@ -14,8 +14,6 @@ export class PostsController {
   async likePost(@Req() req: any, @Res() res: Response, @Body() postId: string) {
     const userData = req.user;
 
-    console.log(postId);
-
     return this.postsService.likePost(req, res, userData, postId);
   }
 
