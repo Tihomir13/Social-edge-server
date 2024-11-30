@@ -23,11 +23,11 @@ export class UserInfo {
   @Prop({ required: false, default: null })
   currLocation: string | null;
 
-  @Prop({ required: false, default: [] })
-  studied: string[];
+  @Prop({ required: false, default: null })
+  studied: string | null;
 
-  @Prop({ required: false, default: [] })
-  worksIn: string[];
+  @Prop({ required: false, default: null })
+  worksIn: string | null;
 
   @Prop({ required: false, default: null })
   relationship: number | null;

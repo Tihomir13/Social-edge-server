@@ -94,4 +94,61 @@ export class ProfileService {
       return res.status(400).json({ message: 'Failed to user data' });
     }
   }
+
+  async addUserInfo(username: string, body, res: any, currUserId) {
+    try {
+      let user = await this.userModel.findOne({
+        username: username,
+      });
+
+      if (!user) {
+        return res.status(401).json({
+          message: 'Invalid username. Please try again.',
+        });
+      }
+
+      console.log(currUserId, user.id);
+
+      let isProfileOwner = false;
+
+      if (currUserId === user.id) {
+        isProfileOwner = true;
+      }
+
+      switch (body.infoType) {
+        case 'Location':
+          await this.userInfoModel.updateOne({
+            $set: { currLocation: body.value.info },
+          });
+          break;
+        case 'Graduation':
+          await this.userInfoModel.updateOne({
+            $set: { studied: body.value.info },
+          });
+          break;
+        case 'Job':
+          await this.userInfoModel.updateOne({
+            $set: { worksIn: body.value.info },
+          });
+          break;
+        case 'Relationship':
+          await this.userInfoModel.updateOne({
+            $set: { relationship: body.value.info },
+          });
+          break;
+        case 'Phone':
+          await this.userInfoModel.updateOne({
+            $set: { phoneNumber: body.value.info },
+          });
+          break;
+      }
+
+      return res.status(200).json({
+        message: 'User data fetched successfully!',
+      });
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      return res.status(400).json({ message: 'Failed to user data' });
+    }
+  }
 }

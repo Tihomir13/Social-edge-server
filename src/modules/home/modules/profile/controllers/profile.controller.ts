@@ -50,6 +50,18 @@ export class ProfileController {
     return this.profileService.getInitialUserData(username, res, userId);
   }
 
+  @Post(':username/info')
+  async addUserInfo(
+    @Param('username') username: string,
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: any,
+  ) {
+    const userId = req.user?.id;
+
+    return this.profileService.addUserInfo(username, body, res, userId);
+  }
+
   @Post()
   @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 1 }]))
   async uploadProfileIMage(
