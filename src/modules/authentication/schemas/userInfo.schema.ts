@@ -15,25 +15,25 @@ export class Birthday {
   year: number;
 }
 
-@Schema()
+@Schema({ minimize: false })
 export class UserInfo {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   userId: Types.ObjectId;
 
-  @Prop({ required: false })
-  currLocation: string;
+  @Prop({ required: false, default: null })
+  currLocation: string | null;
 
-  @Prop({ required: false })
+  @Prop({ required: false, default: [] })
   studied: string[];
 
-  @Prop({ required: false })
+  @Prop({ required: false, default: [] })
   worksIn: string[];
 
-  @Prop({ required: false })
-  relationship: string;
+  @Prop({ required: false, default: null })
+  relationship: number | null;
 
-  @Prop({ required: false })
-  phoneNumber: string;
+  @Prop({ required: false, default: null })
+  phoneNumber: string | null;
 
   @Prop({ type: Birthday, required: true })
   birthday: Birthday;

@@ -6,10 +6,17 @@ import {
   User,
   UserDocument,
 } from '../../../authentication/schemas/registerUser.schema';
+import {
+  UserInfo,
+  UserInfoDocument,
+} from '../../../authentication/schemas/userInfo.schema';
 
 @Injectable()
 export class ProfileService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(UserInfo.name) private userInfoModel: Model<UserInfoDocument>,
+  ) {}
   async uploadProfileImage() {}
 
   async getInitialUserData(
@@ -54,11 +61,7 @@ export class ProfileService {
     }
   }
 
-  async getUserInfo(
-    username: string,
-    res: any,
-    currUserId,
-  ): Promise<any> {
+  async getUserInfo(username: string, res: any, currUserId): Promise<any> {
     try {
       let user = await this.userModel.findOne({
         username: username,
@@ -78,16 +81,9 @@ export class ProfileService {
         isProfileOwner = true;
       }
 
-      let userInfo = await this.userModel.findOne({
-        id: user._id,
+      let userInfo = await this.userInfoModel.findOne({
+        userId: user._id,
       });
-
-      console.log(user._id);
-      
-
-      console.log(userInfo);
-      console.log('sss');
-      
 
       return res.status(200).json({
         message: 'User data fetched successfully!',

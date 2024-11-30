@@ -63,13 +63,6 @@ export class AuthenticationService {
 
       const hashedPass = await bcrypt.hash(userData.passwords.password, salt);
 
-      // const imagePath = path.join(
-      //   __dirname,
-      //   '../../assets/images/default-profile-image.png',
-      // );
-      // const defaultImageBuffer = fs.readFileSync(imagePath);
-      // const defaultImageBase64 = defaultImageBuffer.toString('base64');
-
       const defaultImage = {
         data: Buffer.from('').toString('base64'),
         contentType: '',
@@ -107,10 +100,6 @@ export class AuthenticationService {
 
       const newUserInfo = new this.userInfoModel({
         userId: user._id,
-        currLocation: '',
-        studied: [],
-        worksIn: [],
-        phoneNumber: '',
         birthday: userData.birthday,
       });
 
