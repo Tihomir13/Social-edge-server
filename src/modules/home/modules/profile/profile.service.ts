@@ -73,8 +73,6 @@ export class ProfileService {
         });
       }
 
-      console.log(currUserId, user.id);
-
       let isProfileOwner = false;
 
       if (currUserId === user.id) {
@@ -107,38 +105,40 @@ export class ProfileService {
         });
       }
 
-      console.log(currUserId, user.id);
-
       let isProfileOwner = false;
 
       if (currUserId === user.id) {
         isProfileOwner = true;
       }
 
+      console.log(body);
+
+      const newValue = this.sanitizeValueToNull(body.value);
+
       switch (body.infoType) {
         case 'Location':
           await this.userInfoModel.updateOne({
-            $set: { currLocation: body.value.info },
+            $set: { currLocation: newValue },
           });
           break;
         case 'Graduation':
           await this.userInfoModel.updateOne({
-            $set: { studied: body.value.info },
+            $set: { studied: newValue },
           });
           break;
         case 'Job':
           await this.userInfoModel.updateOne({
-            $set: { worksIn: body.value.info },
+            $set: { worksIn: newValue },
           });
           break;
         case 'Relationship':
           await this.userInfoModel.updateOne({
-            $set: { relationship: body.value.info },
+            $set: { relationship: newValue },
           });
           break;
         case 'Phone':
           await this.userInfoModel.updateOne({
-            $set: { phoneNumber: body.value.info },
+            $set: { phoneNumber: newValue },
           });
           break;
       }
@@ -150,5 +150,9 @@ export class ProfileService {
       console.error('Error fetching user data:', error);
       return res.status(400).json({ message: 'Failed to user data' });
     }
+  }
+
+  sanitizeValueToNull(value: string) {
+    return value == '' ? null : value;
   }
 }
