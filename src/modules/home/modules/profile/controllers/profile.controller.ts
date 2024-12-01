@@ -28,12 +28,38 @@ export class ProfileController {
     return this.postsService.getPostsByUsername(username, res);
   }
 
+  @Get(':username/info')
+  async getUserInfo(
+    @Param('username') username: string,
+    @Req() req: any,
+    @Res() res: Response,
+  ) {
+    const userId = req.user?.id;
+
+    return this.profileService.getUserInfo(username, res, userId);
+  }
+
   @Get(':username')
   async getUserInitialData(
     @Param('username') username: string,
+    @Req() req: any,
     @Res() res: Response,
   ) {
-    return this.profileService.getInitialUserData(username, res);
+    const userId = req.user?.id;
+
+    return this.profileService.getInitialUserData(username, res, userId);
+  }
+
+  @Post(':username/info')
+  async addUserInfo(
+    @Param('username') username: string,
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: any,
+  ) {
+    const userId = req.user?.id;
+
+    return this.profileService.addUserInfo(username, body, res, userId);
   }
 
   @Post()
