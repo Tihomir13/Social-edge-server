@@ -25,6 +25,8 @@ export class NewPostsController {
   ) {
     userData.images = files.images || [];
 
+    console.log(userData);
+    
     userData.userId = req.user?.id;
     userData.username = req.user?.username;
 

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -62,19 +63,29 @@ export class ProfileController {
     return this.profileService.addUserInfo(username, body, res, userId);
   }
 
-  @Post()
+  @Post(':username/new-profile-photo')
   @UseInterceptors(FileFieldsInterceptor([{ name: 'images', maxCount: 1 }]))
-  async uploadProfileIMage(
-    @Body() userData: any,
-    @UploadedFiles() files: { images?: Express.Multer.File[] },
-    @Res() res: Response,
+  async addNewProfilePhoto(
+    @UploadedFiles() files: Record<string, Express.Multer.File[]>,
+    @Param('username') username: string,
     @Req() req: any,
+    @Res() res: Response,
   ) {
-    userData.images = files.images || [];
-
-    userData.userId = req.user?.id;
-    userData.username = req.user?.username;
-
-    return this.profileService.uploadProfileImage();
+    const newProfilePhotoFile = files['images']?.[0];
+    const userId = req.user?.id;
+    
+    return this.profileService.addNewPhoto(username, newProfilePhotoFile, res, userId);
   }
+
+  @Delete(':username/new-profile-photo-remove')
+  async removePhoto(
+    @Param('username') username: string,
+    @Req() req: any,
+    @Res() res: Response,
+  ) {
+    const userId = req.user?.id;
+    
+    return this.profileService.removePhoto(username, res, userId);
+  }
+  
 }

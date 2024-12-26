@@ -17,7 +17,6 @@ export class ProfileService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(UserInfo.name) private userInfoModel: Model<UserInfoDocument>,
   ) {}
-  async uploadProfileImage() {}
 
   async getInitialUserData(
     username: string,
@@ -41,11 +40,23 @@ export class ProfileService {
         isProfileOwner = true;
       }
 
+      const formattedImage = (image) => {
+        // Проверяваме дали снимката съществува и има нужните properties
+        if (!image || !image.data || !image.contentType) {
+          return null;
+        }
+      
+        return {
+          src: `data:${image.contentType};base64,${image.data}`,
+          contentType: image.contentType,
+        };
+      };
+
       const data = {
         userData: {
           name: user.name,
-          profileImage: user.profileImage,
-          bannerImage: user.bannerImage,
+          profileImage: formattedImage(user.profileImage),
+          bannerImage: formattedImage(user.bannerImage),
           username: user.username,
         },
         isProfileOwner,
@@ -149,6 +160,94 @@ export class ProfileService {
     } catch (error) {
       console.error('Error fetching user data:', error);
       return res.status(400).json({ message: 'Failed to user data' });
+    }
+  }
+
+  async addNewPhoto(
+    username: string,
+    newProfilePhotoFile,
+    res: any,
+    currUserId,
+  ) {
+    try {
+      let user = await this.userModel.findOne({
+        username: username,
+      });
+
+      if (!user) {
+        return res.status(401).json({
+          message: 'Invalid username. Please try again.',
+        });
+      }
+
+      let isProfileOwner = false;
+
+      if (currUserId === user.id) {
+        isProfileOwner = true;
+      }
+
+      if (!isProfileOwner) {
+        return res.status(401).json({
+          message: 'Invalid username. Please try again.',
+        });
+      }
+
+      const image = {
+        data: newProfilePhotoFile.buffer.toString('base64'),
+        contentType: newProfilePhotoFile.mimetype,
+      };
+
+      await this.userModel.updateOne(
+        { _id: user.id },
+        { $set: { profileImage: image } },
+      );
+
+      return res.status(200).json({
+        message: 'User data fetched successfully!',
+      });
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      return res.status(400).json({ message: 'Failed to change Photo' });
+    }
+  }
+
+  async removePhoto(
+    username: string,
+    res: any,
+    currUserId,
+  ) {
+    try {
+      let user = await this.userModel.findOne({
+        username: username,
+      });
+
+      if (!user) {
+        return res.status(401).json({
+          message: 'Invalid username. Please try again.',
+        });
+      }
+
+      let isProfileOwner = false;
+
+      if (currUserId === user.id) {
+        isProfileOwner = true;
+      }
+
+      if (!isProfileOwner) {
+        res.status(400);
+      }
+
+      await this.userModel.updateOne(
+        { _id: user.id },
+        { $set: { profileImage: null } },
+      );
+
+      return res.status(200).json({
+        message: 'User data fetched successfully!',
+      });
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      return res.status(400).json({ message: 'Failed to change Photo' });
     }
   }
 
