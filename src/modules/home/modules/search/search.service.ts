@@ -29,23 +29,42 @@ export class SearchService {
         },
         {
           $project: {
-            username: 1, // Взема `username`
-            name: { $concat: ['$name.firstName', ' ', '$name.lastName'] }, // Създава поле `name` като конкатенация
-            profileImage: 1, // Взема `profileImage`
+            username: 1,
+            name: { $concat: ['$name.firstName', ' ', '$name.lastName'] },
+            profileImage: 1,
           },
         },
-        { $limit: 10 }, // Лимит на резултатите
+        { $limit: 10 },
       ]);
-
-      console.log(users);
 
       if (!users || users.length === 0) {
         return res.status(404).json({ message: 'Not Found' });
       }
 
+      const formattedImage = (image) => {
+        if (!image || !image.data || !image.contentType) {
+          return null;
+        }
+
+        return {
+          src: `data:${image.contentType};base64,${image.data}`,
+          contentType: image.contentType,
+        };
+      };
+
+      const formattedUsers = users.map((user) => {
+        return {
+          ...user,
+          profileImage: formattedImage(user.profileImage),
+        };
+      });
+
+      console.log(formattedUsers);
+      
+
       return res.status(200).json({
         message: 'profiles found',
-        users,
+        users: formattedUsers,
       });
     } catch (error) {
       return res.status(400).json({ message: 'Not Found' });
